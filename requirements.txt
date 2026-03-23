@@ -1,0 +1,18 @@
+# Web framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Settings / env
+pydantic-settings==2.6.1
+
+# HTTP client (async)
+httpx==0.28.0
+
+# GitHub App JWT signing
+PyJWT[crypto]==2.10.1
+
+# Supabase client
+supabase==2.10.0
+
+# Stripe
+stripe==11.4.1

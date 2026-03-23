@@ -1,0 +1,38 @@
+# render.yaml — Deploy to Render's free tier with one click.
+# Commit this file to your repo, then connect Render to GitHub.
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: pr-describer
+    runtime: python
+    plan: free          # Free tier — upgrades to $7/mo starter when you need always-on
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GITHUB_APP_ID
+        sync: false     # Fill in Render dashboard
+      - key: GITHUB_APP_PRIVATE_KEY
+        sync: false     # Paste full PEM, use \n for newlines
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_WEBHOOK_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_ID
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: APP_URL
+        sync: false     # Your Render URL e.g. https://pr-describer.onrender.com
+      - key: SECRET_KEY
+        generateValue: true  # Render generates a random value

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PR Describer — AI PR descriptions in seconds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0f0e0d;
+      --muted: #6b6860;
+      --line: #e8e5df;
+      --bg: #faf9f7;
+      --green: #1a7a4a;
+      --green-light: #edf7f1;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    .logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.25rem;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-cta {
+      background: var(--ink);
+      color: #fff;
+      padding: 9px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.8; }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 96px 40px 72px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-light);
+      color: var(--green);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 28px;
+    }
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+    h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--muted);
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ink);
+      color: #fff;
+      padding: 13px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary svg { width: 18px; height: 18px; fill: currentColor; }
+    .hero-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Demo box ── */
+    .demo {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+    .demo-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .demo-bar {
+      background: #f3f2ef;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #febc2e; }
+    .dot.g { background: #28c840; }
+    .demo-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+    .demo-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 620px) { .demo-body { grid-template-columns: 1fr; } }
+    .demo-col {
+      padding: 24px 28px;
+    }
+    .demo-col:first-child {
+      border-right: 1px solid var(--line);
+    }
+    .demo-col-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .diff-line {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #555;
+    }
+    .diff-add { color: #1a7a4a; background: #edf7f1; padding: 0 3px; border-radius: 2px; }
+    .diff-remove { color: #b91c1c; background: #fff0f0; padding: 0 3px; border-radius: 2px; }
+    .pr-description { font-size: 14px; line-height: 1.75; color: #333; }
+    .pr-description h3 { font-size: 13px; font-weight: 600; margin: 14px 0 6px; color: var(--ink); }
+    .pr-description h3:first-child { margin-top: 0; }
+    .pr-description p { color: #555; margin-bottom: 8px; }
+    .pr-description ul { padding-left: 18px; color: #555; }
+    .pr-description li { margin-bottom: 4px; }
+
+    /* ── How it works ── */
+    .section {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 64px 40px;
+      border-top: 1px solid var(--line);
+    }
+    .section-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    @media (max-width: 600px) { .steps { grid-template-columns: 1fr; gap: 28px; } }
+    .step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .step h3 {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .step p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Pricing ── */
+    .price-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 36px;
+      background: #fff;
+      max-width: 380px;
+    }
+    .price-amount {
+      font-family: 'Instrument Serif', serif;
+      font-size: 3rem;
+      line-height: 1;
+      margin: 16px 0 4px;
+    }
+    .price-amount span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+    .price-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .features { list-style: none; margin-bottom: 28px; }
+    .features li {
+      font-size: 14px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .features li::before { content: '✓'; color: var(--green); font-weight: 600; }
+    .trial-note {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 32px 40px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/">PR Describer</a>
+  <a class="nav-cta" href="/auth/install">Install Free →</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="badge">GitHub App · 14-day free trial</div>
+  <h1>Your PRs deserve<br><em>better descriptions</em></h1>
+  <p class="hero-sub">
+    PR Describer reads your diff and writes a clear, structured pull request
+    description in seconds. Installs in one click. Works on every repo.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="/auth/install">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+      </svg>
+      Install GitHub App
+    </a>
+    <span class="hero-note">Free for 14 days · then $9/month per org</span>
+  </div>
+</section>
+
+<!-- Demo -->
+<div class="demo">
+  <div class="demo-card">
+    <div class="demo-bar">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <span class="demo-label">Pull Request #47 — feat/user-auth-tokens</span>
+    </div>
+    <div class="demo-body">
+      <div class="demo-col">
+        <div class="demo-col-label">Git diff</div>
+        <div class="diff-line"><span class="diff-add">+ async def create_token(user_id: int) -> str:</span></div>
+        <div class="diff-line"><span class="diff-add">+   payload = {"sub": user_id, "exp": ...}</span></div>
+        <div class="diff-line"><span class="diff-add">+   return jwt.encode(payload, SECRET_KEY)</span></div>
+        <div class="diff-line">&nbsp;</div>
+        <div class="diff-line"><span class="diff-remove">- def login(username, password):</span></div>
+        <div class="diff-line"><span class="diff-remove">-   session["user"] = username</span></div>
+        <div class="diff-line"><span class="diff-add">+ async def login(username, password):</span></div>
+        <div class="diff-line"><span class="diff-add">+   token = await create_token(user.id)</span></div>
+        <div class="diff-line"><span class="diff-add">+   return {"access_token": token}</span></div>
+      </div>
+      <div class="demo-col">
+        <div class="demo-col-label">Generated description ✨</div>
+        <div class="pr-description">
+          <h3>## What changed</h3>
+          <p>Replaced session-based auth with JWT access tokens across the login flow.</p>
+          <h3>## Why</h3>
+          <p>Sessions don't scale across multiple API instances. JWTs are stateless and work with the new microservice architecture.</p>
+          <h3>## How</h3>
+          <ul>
+            <li>Added <code>create_token()</code> using PyJWT with configurable expiry</li>
+            <li>Updated <code>login()</code> to async and return token in response body</li>
+            <li>Removed direct session mutation</li>
+          </ul>
+          <h3>## Testing</h3>
+          <p>Existing auth tests updated to assert token shape in response.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How it works -->
+<section class="section">
+  <div class="section-label">How it works</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Install the GitHub App</h3>
+      <p>One click, choose which repos. No code changes, no CI config.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Open a pull request</h3>
+      <p>As soon as the PR opens, PR Describer reads the diff and generates a description.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Description appears instantly</h3>
+      <p>The PR body is filled in automatically. Edit it freely — it's just a starting point.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section">
+  <div class="section-label">Pricing</div>
+  <div class="price-card">
+    <div style="font-size:14px;font-weight:500;">One plan. No tricks.</div>
+    <div class="price-amount">$9<span>/month</span></div>
+    <div class="price-desc">Per organisation or user account. Unlimited repos and PRs.</div>
+    <ul class="features">
+      <li>Unlimited pull requests</li>
+      <li>All repos in your org</li>
+      <li>Works with private repos</li>
+      <li>AI powered by Llama 3.3 70B</li>
+      <li>Cancel any time</li>
+    </ul>
+    <a class="btn-primary" href="/auth/install" style="width:100%;justify-content:center;">
+      Start free trial →
+    </a>
+    <p class="trial-note">14 days free, no credit card required to install</p>
+  </div>
+</section>
+
+<footer>
+  <p>Built with Python, FastAPI, Groq, and Stripe · <a href="mailto:hello@pr-describer.com" style="color:inherit">hello@pr-describer.com</a></p>
+</footer>
+
+</body>
+</html>
