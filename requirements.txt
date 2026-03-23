@@ -5,14 +5,14 @@ uvicorn[standard]==0.32.1
 # Settings / env
 pydantic-settings==2.6.1
 
-# HTTP client (async)
-httpx==0.28.0
+# HTTP client (async) — version managed by supabase
+httpx>=0.26,<0.29
 
 # GitHub App JWT signing
 PyJWT[crypto]==2.10.1
 
 # Supabase client
-supabase==2.10.0
+supabase==2.28.3
 
 # Stripe
 stripe==11.4.1
